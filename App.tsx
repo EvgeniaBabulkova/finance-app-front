@@ -2,31 +2,70 @@ import "@/global.css";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   createStaticNavigation,
-  StaticParamList,
+  NavigationContainer,
 } from "@react-navigation/native";
 import { GluestackUIProvider } from "./components/ui/gluestack-ui-provider";
 import CategoriesPage from "./pages/CategoriesPage";
 import HomePage from "./pages/HomePage";
+import StatsPage from "./pages/StatsPage";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Text } from "react-native";
 
 // -------------------------------------------------------------------------------------------------------
 
+// we're not typing the pages, but the type of parameters/data that the page expects to receive
 export type RootStackParamList = {
+  Tabs: undefined;
   Home: undefined;
   Categories: undefined;
+  Stats: undefined;
+  // Profile: { userId: string }; // if the page expected data - thats how it would look
 };
 
+const TabNavigator = createBottomTabNavigator();
+
+function MyTabs() {
+  return (
+    <TabNavigator.Navigator screenOptions={{ headerShown: false }}>
+      <TabNavigator.Screen
+        name="Home"
+        component={HomePage}
+        options={{
+          title: "Home",
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏠</Text>,
+        }}
+      />
+      <TabNavigator.Screen
+        name="Categories"
+        component={CategoriesPage}
+        options={{
+          title: "Categories",
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>📂</Text>,
+        }}
+      />
+    </TabNavigator.Navigator>
+  );
+}
+
 const RootStack = createNativeStackNavigator<RootStackParamList>({
-  initialRouteName: "Home",
+  initialRouteName: "Tabs",
   screens: {
-    Home: HomePage,
-    // To set custon name:
-    // Home: {
-    //   screen: HomeScreen,
-    //   options: {
-    //     title: 'Overview',
-    //   },
-    // },
-    Categories: CategoriesPage,
+    Tabs: {
+      screen: MyTabs,
+      options: { headerShown: false },
+    },
+    Home: {
+      screen: HomePage,
+      options: { headerShown: true, title: "Home" },
+    },
+    Categories: {
+      screen: CategoriesPage,
+      options: { headerShown: true, title: "Categories" },
+    },
+    Stats: {
+      screen: StatsPage,
+      options: { headerShown: true, title: "Stats" },
+    },
   },
 });
 

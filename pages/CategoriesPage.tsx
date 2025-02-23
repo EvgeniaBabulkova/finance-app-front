@@ -11,12 +11,18 @@ import {
   FormControlLabelText,
 } from "@/components/ui/form-control";
 import { Input, InputField } from "@/components/ui/input";
-// import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/App";
+import { useNavigation } from "@react-navigation/native";
 // -------------------------------------------------------------------------------------------------------
-// fix the typescript error
+
+type CategoriesPageNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "Categories"
+>;
 
 export default function CategoriesPage() {
-  // const navigation = useNavigation();
+  const navigation = useNavigation<CategoriesPageNavigationProp>();
   console.log("CategoriesPage Loaded");
 
   const [category, setCategory] = useState("");
@@ -73,24 +79,23 @@ export default function CategoriesPage() {
 
   return (
     <GluestackUIProvider mode="light">
-      {/* btn for some page
-      <Button
-        size="md"
-        variant="solid"
-        action="primary"
-        onPress={() => navigation.navigate("Some")}
-        className="mt-4"
-      >
-        <ButtonText>Go to some page</ButtonText>
-      </Button> */}
-
       <View style={styles.container}>
+        <Button
+          size="md"
+          variant="solid"
+          action="primary"
+          onPress={() => navigation.navigate("Stats")}
+          className="mt-4"
+        >
+          <ButtonText>Go to stats</ButtonText>
+        </Button>
+
         <Heading highlight>Expenses</Heading>
 
         <FormControl size="lg">
           {" "}
           <FormControlLabel>
-            <FormControlLabelText> New category </FormControlLabelText>
+            <FormControlLabelText> New categoryyyy </FormControlLabelText>
           </FormControlLabel>
           <Input variant="outline" size="md">
             <InputField

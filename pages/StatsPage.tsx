@@ -7,10 +7,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 // typing the `useNavigation` hook
 type HomePageNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
-  "Home"
+  "Stats"
 >;
 
-export default function HomePage() {
+export default function StatsPage() {
   const navigation = useNavigation<HomePageNavigationProp>();
   console.log("HomePage Loaded");
 
@@ -21,10 +21,10 @@ export default function HomePage() {
         size="md"
         variant="solid"
         action="primary"
-        onPress={() => navigation.navigate("Categories")}
+        onPress={() => navigation.navigate("Categories")} // it would lead to stats inside the stack navigator, so no tabs
         className="mt-4"
       >
-        <ButtonText>Go to categoriess</ButtonText>
+        <ButtonText>Go back to categoriess</ButtonText>
       </Button>
     </View>
   );
