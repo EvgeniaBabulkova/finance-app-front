@@ -14,6 +14,10 @@ import { Input, InputField } from "@/components/ui/input";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/App";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories, createCategory } from "@/store/categorySlice";
+import { AppDispatch, RootState } from "@/store/store"; // Import RootState from store.ts
+
 // -------------------------------------------------------------------------------------------------------
 
 type CategoriesPageNavigationProp = NativeStackNavigationProp<
@@ -25,56 +29,31 @@ export default function CategoriesPage() {
   const navigation = useNavigation<CategoriesPageNavigationProp>();
   console.log("CategoriesPage Loaded");
 
-  const [category, setCategory] = useState("");
-  const [categoriesList, setCategoriesList] = useState<
-    { id: number; title: string }[]
-  >([]); // for the list of categores
-  const [loading, setLoading] = useState(true);
+  const [category, setCategory] = useState(""); // Local state for input field
+  const dispatch = useDispatch<AppDispatch>(); // we are typing it this way cause of the thunk
+  const { categories, status, errormessage } = useSelector(
+    (state: RootState) => state.category // points to the store
+  ); // useSelector
+  // connects this component to the Redux store, extracts the category slice of state from Redux.
+  // And returns an object { categories, status, errormessage }, so your component can display the data.
+  // Aka subscribes to the state of the categories
 
+  // Fetch categories when the page loads aka when there is state (and its "idle")
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("http://10.0.2.2:3000/categories");
-        if (!response.ok) {
-          throw new Error("Failed to fetch categories");
-        }
-        const data = await response.json();
-        setCategoriesList(data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCategories();
-  }, [categoriesList]);
+    if (status === "idle") {
+      // by using dispatch, we are not only making the api call, but making the cll thrugh Redux, so the staate updates in the store
+      dispatch(fetchCategories());
+    }
+  }, [dispatch, status]); // adding dispatch here is related more to a eslint rule, than to sth i should care about
 
-  const handleSubmit = async () => {
+  // Handle category creation using Redux
+  const handleSubmit = () => {
     if (!category.trim()) {
       Alert.alert("Error", "Category name cannot be empty.");
       return;
     }
-
-    try {
-      const response = await fetch("http://10.0.2.2:3000/categories", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title: category }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create category");
-      }
-      const data = await response.json();
-      Alert.alert("Success", `Category "${data.title}" created!`);
-      setCategory(""); // Clear input after success
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "An unknown error occurred";
-      Alert.alert("Error", errorMessage);
-    }
+    dispatch(createCategory(category));
+    setCategory(""); // Clear input after success
   };
 
   return (
@@ -117,15 +96,25 @@ export default function CategoriesPage() {
           <ButtonText>Create</ButtonText>
         </Button>
 
+        {/* deal with error occurance */}
+        {status === "failed" && (
+          <Text style={{ color: "red" }}>{errormessage}</Text> // ✅ Show error from Redux
+        )}
+
         {/* Categories List */}
         <View style={styles.listContainer}>
           <Text style={styles.listTitle}>Categories</Text>
 
-          {loading ? (
-            <Text>Loading...</Text>
-          ) : (
+          {/* Show Loading State */}
+          {status === "loading" && <Text>Loading...</Text>}
+
+          {/* Show Error Message */}
+          {errormessage && <Text style={{ color: "red" }}>{errormessage}</Text>}
+
+          {/* Display Fetched Categories */}
+          {status === "succeeded" && (
             <FlatList
-              data={categoriesList}
+              data={categories}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <Text style={styles.listItem}>• {item.title}</Text>

@@ -29,3 +29,22 @@ export default function StatsPage() {
     </View>
   );
 }
+
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../store/store";
+import { decrement, increment } from "../store/counterSlice";
+
+export function Counter() {
+  const count = useSelector((state: RootState) => state.counter.value);
+  const dispatch = useDispatch();
+
+  return (
+    <View>
+      <Button onPress={() => dispatch(increment())} />
+
+      <Text>{count.toString()}</Text>
+      <Button onPress={() => dispatch(decrement())} />
+    </View>
+  );
+}

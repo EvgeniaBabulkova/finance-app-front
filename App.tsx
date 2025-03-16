@@ -1,15 +1,14 @@
 import "@/global.css";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {
-  createStaticNavigation,
-  NavigationContainer,
-} from "@react-navigation/native";
+import { createStaticNavigation } from "@react-navigation/native";
 import { GluestackUIProvider } from "./components/ui/gluestack-ui-provider";
 import CategoriesPage from "./pages/CategoriesPage";
 import HomePage from "./pages/HomePage";
 import StatsPage from "./pages/StatsPage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
+import { store } from "./store/store";
+import { Provider } from "react-redux";
 
 // -------------------------------------------------------------------------------------------------------
 
@@ -73,8 +72,10 @@ const Navigation = createStaticNavigation(RootStack);
 
 export default function App() {
   return (
-    <GluestackUIProvider mode="dark">
-      <Navigation />;
-    </GluestackUIProvider>
+    <Provider store={store}>
+      <GluestackUIProvider mode="dark">
+        <Navigation />
+      </GluestackUIProvider>
+    </Provider>
   );
 }
