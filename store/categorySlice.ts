@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // Async function to fetch categories from the backend
 export const fetchCategories = createAsyncThunk(
-  "category/fetchAll",
+  "category/fetchAll", // thats just the name of the redux thunk
   async () => {
     const response = await fetch("http://10.0.2.2:3000/categories");
     return await response.json();

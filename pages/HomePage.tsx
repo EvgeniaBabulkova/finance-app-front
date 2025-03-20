@@ -16,7 +16,7 @@ export default function HomePage() {
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>WELCoME</Text>
+      <Text>WELCoME to homeeee page</Text>
       <Button
         size="md"
         variant="solid"
