@@ -17,6 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories, createCategory } from "@/store/categorySlice";
 import { AppDispatch, RootState } from "@/store/store"; // Import RootState from store.ts
+import { selectToken } from "@/store/userSlice";
 
 // -------------------------------------------------------------------------------------------------------
 
@@ -29,6 +30,7 @@ export default function CategoriesPage() {
   const navigation = useNavigation<CategoriesPageNavigationProp>();
   console.log("CategoriesPage Loaded");
 
+  const token = useSelector(selectToken);
   const [category, setCategory] = useState(""); // Local state for input field
   const dispatch = useDispatch<AppDispatch>(); // we are typing it this way cause of the thunk
   const { categories, status, errormessage } = useSelector(
@@ -40,11 +42,11 @@ export default function CategoriesPage() {
 
   // Fetch categories when the page loads aka when there is state (and its "idle")
   useEffect(() => {
-    if (status === "idle") {
+    if (status === "idle" && token) {
       // by using dispatch, we are not only making the api call, but making the cll thrugh Redux, so the staate updates in the store
-      dispatch(fetchCategories());
+      dispatch(fetchCategories(token));
     }
-  }, [dispatch, status]); // adding dispatch here is related more to a eslint rule, than to sth i should care about
+  }, [dispatch, status, token]); // adding dispatch here is related more to a eslint rule, than to sth i should care about
 
   // Handle category creation using Redux
   const handleSubmit = () => {
@@ -52,7 +54,7 @@ export default function CategoriesPage() {
       Alert.alert("Error", "Category name cannot be empty.");
       return;
     }
-    dispatch(createCategory(category));
+    dispatch(createCategory({ categoryName: category, token }));
     setCategory(""); // Clear input after success
   };
 
@@ -115,7 +117,9 @@ export default function CategoriesPage() {
           {status === "succeeded" && (
             <FlatList
               data={categories}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item) =>
+                item.id.toString() ?? Math.random().toString()
+              }
               renderItem={({ item }) => (
                 <Text style={styles.listItem}>• {item.title}</Text>
               )}

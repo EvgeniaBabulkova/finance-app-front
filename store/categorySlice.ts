@@ -1,21 +1,42 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// Async function to fetch categories from the backend
+// fetch categories (send the token too)
 export const fetchCategories = createAsyncThunk(
   "category/fetchAll", // thats just the name of the redux thunk
-  async () => {
-    const response = await fetch("http://10.0.2.2:3000/categories");
-    return await response.json();
+  async (token: string) => {
+    try {
+      console.log("Attempting to fetch categoriesss");
+      const response = await fetch("http://10.0.2.2:3000/categories", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // You'll need to add your actual JWT token here
+        },
+      });
+      console.log("Response status:", response.status);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log("Fetch successful, data:", data);
+      return data;
+    } catch (error: any) {
+      console.error("Fetch failed:", error.message);
+      throw error;
+    }
   }
 );
 
 // Async function to create a new category
 export const createCategory = createAsyncThunk(
   "category/create",
-  async (categoryName: string) => {
+  async ({ categoryName, token }: { categoryName: string; token: string }) => {
     const response = await fetch("http://10.0.2.2:3000/categories", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ title: categoryName }),
     });
     return await response.json();
