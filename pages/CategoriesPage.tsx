@@ -54,7 +54,11 @@ export default function CategoriesPage() {
       Alert.alert("Error", "Category name cannot be empty.");
       return;
     }
-    dispatch(createCategory({ categoryName: category, token }));
+    if (token) {
+      dispatch(createCategory({ categoryName: category, token }));
+    } else {
+      Alert.alert("Error", "User token is missing.");
+    }
     setCategory(""); // Clear input after success
   };
 

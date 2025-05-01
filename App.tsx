@@ -5,11 +5,12 @@ import { GluestackUIProvider } from "./components/ui/gluestack-ui-provider";
 import CategoriesPage from "./pages/CategoriesPage";
 import HomePage from "./pages/HomePage";
 import StatsPage from "./pages/StatsPage";
-import SignupPage from "./pages/SignupPage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text, View } from "react-native";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
 // -------------------------------------------------------------------------------------------------------
 
@@ -19,7 +20,8 @@ export type RootStackParamList = {
   Home: undefined;
   Categories: undefined;
   Stats: undefined;
-  Signup: undefined;
+  Login: undefined;
+  Register: undefined;
   // Profile: { userId: string }; // if the page expected data - thats how it would look
 };
 
@@ -49,10 +51,14 @@ function MyTabs() {
 }
 
 const RootStack = createNativeStackNavigator<RootStackParamList>({
-  initialRouteName: "Signup",
+  initialRouteName: "Login",
   screens: {
-    Signup: {
-      screen: SignupPage,
+    Login: {
+      screen: LoginPage,
+      options: { headerShown: false }, // No header for the Sign Up screen
+    },
+    Register: {
+      screen: RegisterPage,
       options: { headerShown: false }, // No header for the Sign Up screen
     },
 
