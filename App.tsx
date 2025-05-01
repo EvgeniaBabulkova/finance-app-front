@@ -11,6 +11,8 @@ import { store } from "./store/store";
 import { Provider } from "react-redux";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import ProfilePage from "./pages/ProfilePage";
+import AuthProvider from "./AuthProvider";
 
 // -------------------------------------------------------------------------------------------------------
 
@@ -22,31 +24,42 @@ export type RootStackParamList = {
   Stats: undefined;
   Login: undefined;
   Register: undefined;
-  // Profile: { userId: string }; // if the page expected data - thats how it would look
+  // Profile: { userId: string };
+  Profile: undefined;
 };
 
 const TabNavigator = createBottomTabNavigator();
 
 function MyTabs() {
   return (
-    <TabNavigator.Navigator screenOptions={{ headerShown: false }}>
-      <TabNavigator.Screen
-        name="Home"
-        component={HomePage}
-        options={{
-          title: "Home",
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏠</Text>,
-        }}
-      />
-      <TabNavigator.Screen
-        name="Categories"
-        component={CategoriesPage}
-        options={{
-          title: "Categories",
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>📂</Text>,
-        }}
-      />
-    </TabNavigator.Navigator>
+    <AuthProvider>
+      <TabNavigator.Navigator screenOptions={{ headerShown: false }}>
+        <TabNavigator.Screen
+          name="Home"
+          component={HomePage}
+          options={{
+            title: "Home",
+            tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏠</Text>,
+          }}
+        />
+        <TabNavigator.Screen
+          name="Categories"
+          component={CategoriesPage}
+          options={{
+            title: "Categories",
+            tabBarIcon: () => <Text style={{ fontSize: 20 }}>📂</Text>,
+          }}
+        />
+        <TabNavigator.Screen
+          name="profile"
+          component={ProfilePage}
+          options={{
+            title: "Profile",
+            tabBarIcon: () => <Text style={{ fontSize: 20 }}>🧑</Text>,
+          }}
+        />
+      </TabNavigator.Navigator>
+    </AuthProvider>
   );
 }
 
@@ -73,6 +86,10 @@ const RootStack = createNativeStackNavigator<RootStackParamList>({
     Categories: {
       screen: CategoriesPage,
       options: { headerShown: true, title: "Categories" },
+    },
+    Profile: {
+      screen: ProfilePage,
+      options: { headerShown: true, title: "Profile" },
     },
     Stats: {
       screen: StatsPage,

@@ -5,12 +5,17 @@ import { RootState } from "./store";
 interface UserState {
   token: string | null;
   errormessage: string | null;
+  user: {
+    username: string;
+    email: string;
+  } | null;
 }
 
 // now initial state for the user
 const initialState: UserState = {
   token: null,
   errormessage: null,
+  user: null,
 };
 
 // to type the incoming data
@@ -73,6 +78,7 @@ export const login = createAsyncThunk(
 
 // Selector to access token anywhere in the app
 export const selectToken = (state: RootState) => state.user.token;
+export const selectUser = (state: RootState) => state.user.user;
 
 // Creaating the slice hereeeeeeee:
 const userSlice = createSlice({
@@ -80,7 +86,9 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
+      console.log("Logging out...");
       state.token = null;
+      state.user = null;
       state.errormessage = null;
     },
   },
@@ -91,6 +99,10 @@ const userSlice = createSlice({
         console.log("payload", action.payload);
         // Store the token when register is successful
         state.token = action.payload.user.access_token;
+        state.user = {
+          username: action.payload.user.username,
+          email: action.payload.user.email,
+        };
         state.errormessage = null;
       })
       .addCase(register.rejected, (state, action) => {
@@ -101,6 +113,10 @@ const userSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         console.log("Login fulfilled:", action.payload);
         state.token = action.payload.user.access_token;
+        state.user = {
+          username: action.payload.user.username,
+          email: action.payload.user.email,
+        };
         state.errormessage = null;
       })
       .addCase(login.rejected, (state, action) => {
